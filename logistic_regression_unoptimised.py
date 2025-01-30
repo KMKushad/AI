@@ -1,4 +1,5 @@
 import numpy as np
+import math
 from math import log
 
 #cumulative cost
@@ -16,6 +17,9 @@ dJ_db = 0
 
 #learning rate
 LEARNING_RATE = 0.01
+
+#allows log(0) to be computed 
+epsilon = 1e-7
 
 
 X = np.array([
@@ -40,17 +44,18 @@ def pretty_print(arr):
 
 #sigmoid activation function
 def sigmoid(x):
-    return 1 / (1 + np.exp(-x))
+    return 1 / (1 + math.exp(-x))
 
 #error in one training example
 def loss_function(y_hat, y):
-    return -(y * log(y_hat) + (1-y) * log(1 - y_hat))
+    #return -(y * log(y_hat + epsilon) + (1-y) * log(1 - y_hat + epsilon))
+    return abs(y - y_hat)
 
 
 def train():
     global W, b, J, dJ_dw, dJ_db
     for i in range(m):
-        z = np.dot(W.T, X[i]) + b
+        z = np.dot(W, X[i]) + b
         a = sigmoid(z)
         J += loss_function(a, y[i])
         dz = a - y[i]
@@ -65,7 +70,7 @@ def train():
         
         b -= LEARNING_RATE * dJ_db
 
-for i in range(10):
+for i in range(100):
     train()
     print(f"Iteration: {i}, Cost: {J}")
 
